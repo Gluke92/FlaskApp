@@ -6,13 +6,12 @@ from passlib.hash import sha256_crypt
 
 # Used pip to install passlib; important to remember that dependencies must be in directory
 
-
 app = Flask(__name__)
 
 # Config MySQL
-app.config['MYSQL_HOST'] = 'localhost:3306'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 # INIT MYSQL
@@ -76,10 +75,29 @@ def register():
 
         flash('You are now reigstered and can log in', 'success')
 
-        redirect(url_for('index'))
+        return redirect(url_for('login'))
         return render_template('register.html', form=form)
     return render_template('register.html', form=form)
 
+#User login
+@app.route('/login', methods=['Get', 'POST'])
+def login ():
+    if request.method == 'POST':
+        #Get form fields
+        username = request.form['username']
+        passwrod_candidate = request.form['password']
+
+        #Create cursor
+        cur = mysql.connection.cursor()
+
+        #Get user by username
+        result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
+
+        if result > 0:
+            # Get stored hash
+            data = cur.fetchone()
+            password = data['password']
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.secret_key = 'secret123'
