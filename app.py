@@ -97,6 +97,14 @@ def login ():
             # Get stored hash
             data = cur.fetchone()
             password = data['password']
+
+            #Compare Passwords
+
+            if sha256_crypt.verify(passwrod_candidate, password)
+                app.loger.info('PASSSWORD MATCHED')
+        else:
+            app.logger.inf('NO USER')
+
     return render_template('login.html')
 
 if __name__ == '__main__':
